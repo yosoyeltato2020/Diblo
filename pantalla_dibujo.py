@@ -5,65 +5,71 @@ from componentes import DrawingArea
 from palabras import Palabras
 from pronunciador import reproducir_palabra
 from reconocimiento_offline import reconocer_voz
-from kivy.graphics import Color, Rectangle  # fondo opcional
-
+from kivy.graphics import Color, Rectangle
 
 class DibujoWidget(BoxLayout):
+    """Widget principal que combina etiqueta, área de dibujo y cuatro botones."""
+
     def __init__(self, **kwargs):
         super().__init__(orientation='vertical', **kwargs)
 
-        # ------- etiqueta visible -------
+        # ── Etiqueta con la palabra ───────────────────────────
         self.lbl_palabra = Label(
             markup=True,
             font_size='28sp',
-            size_hint_y=None,        # altura fija
+            size_hint_y=None,
             halign='center',
             valign='middle'
         )
-        # altura según el alto del texto
+        # Altura dinámica según el texto
         self.lbl_palabra.bind(texture_size=lambda l, t: setattr(l, 'height', t[1] + 20))
 
-        # fondo gris clarito para que se vea
+        # Fondo azul claro detrás de la etiqueta
         with self.lbl_palabra.canvas.before:
             Color(0.7, 0.85, 1, 1)
-            self.bg = Rectangle()
+            self._bg = Rectangle()
         self.lbl_palabra.bind(pos=self._update_bg, size=self._update_bg)
 
         self.add_widget(self.lbl_palabra)
-        # --------------------------------
 
-        # resto igual que antes …
+        # ── Área de dibujo ────────────────────────────────────
         self.area_dibujo = DrawingArea(size_hint=(1, 0.7))
         self.add_widget(self.area_dibujo)
 
-        botones = BoxLayout(size_hint_y=0.2)
-        for txt, fn in [
+        # ── Botones ───────────────────────────────────────────
+        barra_botones = BoxLayout(size_hint_y=0.2)
+        for texto, callback in [
             ("Cambiar palabra", self.cambiar_palabra),
             ("Borrar", self.borrar_dibujo),
             ("Pronunciar", self.pronunciar),
-            ("Hablar", self.reconocer)
+            ("Hablar", self.reconocer),
         ]:
-            b = Button(text=txt); b.bind(on_press=fn); botones.add_widget(b)
-        self.add_widget(botones)
+            btn = Button(text=texto)
+            btn.bind(on_press=callback)
+            barra_botones.add_widget(btn)
+        self.add_widget(barra_botones)
 
+        # ── Lógica de palabras ────────────────────────────────
         self.palabras = Palabras()
-        self.palabra_actual = ''
-        self.cambiar_palabra()            # primera palabra
+        self.palabra_actual = ''  # se establecerá al entrar en la pantalla
 
-    # ---- util para fondo de la etiqueta ----
-    def _update_bg(self, *args):
-        self.bg.pos = self.lbl_palabra.pos
-        self.bg.size = self.lbl_palabra.size
-    # ----------------------------------------
+    # ---------------------------------------------------------
+    def _update_bg(self, *_):
+        self._bg.pos = self.lbl_palabra.pos
+        self._bg.size = self.lbl_palabra.size
 
-    def cambiar_palabra(self, *a):
+    def cambiar_palabra(self, *_):
         self.palabra_actual = self.palabras.nueva_palabra()
         self.lbl_palabra.text = f"[b]Dibuja: {self.palabra_actual.upper()}[/b]"
         self.area_dibujo.borrar_canvas()
         reproducir_palabra(self.palabra_actual)
 
-    def borrar_dibujo(self, *_):  self.area_dibujo.borrar_canvas()
-    def pronunciar(self, *_):      reproducir_palabra(self.palabra_actual)
+    def borrar_dibujo(self, *_):
+        self.area_dibujo.borrar_canvas()
+
+    def pronunciar(self, *_):
+        if self.palabra_actual:
+            reproducir_palabra(self.palabra_actual)
 
     def reconocer(self, *_):
         texto = reconocer_voz()

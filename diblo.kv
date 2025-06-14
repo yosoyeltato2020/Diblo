@@ -1,0 +1,41 @@
+#:kivy 2.2.0
+#:import dp kivy.metrics.dp
+#:import DibujoWidget pantalla_dibujo.DibujoWidget
+
+ScreenManager:
+    WelcomeScreen:
+    DibujoScreen:
+
+<WelcomeScreen@Screen>:
+    name: 'welcome'
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: dp(60)
+        padding: dp(60)
+        canvas.before:
+            Color:
+                rgba: 0.88, 0.95, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Label:
+            text: 'D I B L O'
+            font_size: '72sp'
+            bold: True
+            color: 0.12, 0.12, 0.35, 1
+        Button:
+            text: 'Comenzar'
+            font_size: '32sp'
+            size_hint: 0.5, None
+            height: dp(80)
+            pos_hint: {'center_x': 0.5}
+            background_normal: ''
+            background_color: 0.3, 0.6, 1, 1
+            on_release:
+                app.root.current = 'dibujo'
+
+<DibujoScreen@Screen>:
+    name: 'dibujo'
+    on_enter: widget.cambiar_palabra()
+    DibujoWidget:
+        id: widget
