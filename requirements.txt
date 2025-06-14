@@ -1,0 +1,5 @@
+kivy
+gTTS
+SpeechRecognition
+PyAudio
+vosk

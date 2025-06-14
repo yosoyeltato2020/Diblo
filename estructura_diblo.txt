@@ -1,0 +1,10 @@
+Estructura del proyecto: Diblo
+
+Diblo/
+├── main.py                # Punto de entrada de la aplicación
+├── pantalla_dibujo.py     # Lógica principal de la interfaz (pantalla y botones)
+├── componentes.py         # Área de dibujo (canvas)
+├── pronunciador.py        # Pronuncia la palabra con voz usando gTTS
+├── reconocimiento.py      # Escucha lo que el niño dice (speech recognition)
+├── palabras.py            # Genera palabras aleatorias de una lista
+└── README.md              # Descripción del proyecto y futuras mejoras
