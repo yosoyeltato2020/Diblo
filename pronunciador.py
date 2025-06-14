@@ -1,46 +1,51 @@
-"""pronunciador.py — gTTS + playsound sin solapamientos
-
-Reproduce la palabra solo si no hay otra locución en curso; evita que se
-solapen dos audios cuando el usuario pulsa rápidamente varios botones o si
-`cambiar_palabra()` se invoca dos veces por accidente.
-
-* Requiere gTTS y playsound (>=1.3.0).
-* No depende de reproductores externos.
+"""
+Pronuncia texto con gTTS + playsound.
+• Lanza la reproducción en un hilo sin bloquear la interfaz.
+• Cachea los MP3 en disco (máx. 128) para no re‑sintetizar palabras.
+• clear_cache() borra los ficheros temporales y vacía la caché.
 """
 
 from tempfile import NamedTemporaryFile
+from functools import lru_cache
+from pathlib import Path
 import threading
 import os
+
 from gtts import gTTS
-from playsound import playsound  # pip install playsound==1.3.0
+from playsound import playsound
 
-# ── Control de concurrencia ────────────────────────────────────────────────
-_is_playing = False  # indica si hay un audio sonando
-_lock = threading.Lock()
+# Almacena las rutas generadas para poder borrarlas luego
+_cache_paths: set[str] = set()
 
 
-def reproducir_palabra(palabra: str) -> None:
-    """Genera un MP3 y lo reproduce solo si no hay otro audio activo."""
+@lru_cache(maxsize=128)
+def _audio_file(texto: str) -> str:
+    """Devuelve la ruta a un MP3; lo crea y lo guarda en caché la 1ª vez."""
+    tmp = NamedTemporaryFile(delete=False, suffix=".mp3")
+    tmp.close()
+    gTTS(text=texto, lang="es").save(tmp.name)
+    _cache_paths.add(tmp.name)
+    return tmp.name
 
-    global _is_playing
-    with _lock:
-        if _is_playing:
-            # Ya se está reproduciendo algo; ignoramos la nueva petición
-            return
-        _is_playing = True
+
+def reproducir_palabra(texto: str) -> None:
+    """Reproduce la palabra sin bloquear la GUI (cada llamada en su hilo)."""
 
     def _worker():
-        try:
-            with NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
-                gTTS(text=palabra, lang="es").save(tmp.name)
-                # playsound es bloqueante; cuando termina el audio, devuelve
-                playsound(tmp.name)
-        finally:
-            # Limpiar el archivo temporal y liberar el flag
-            if os.path.exists(tmp.name):
-                os.unlink(tmp.name)
-            with _lock:
-                global _is_playing
-                _is_playing = False
+        path = _audio_file(texto.lower())
+        playsound(path)
 
     threading.Thread(target=_worker, daemon=True).start()
+
+
+def clear_cache() -> None:
+    """Elimina los MP3 temporales y limpia la caché LRU."""
+    global _cache_paths
+    for path in list(_cache_paths):
+        if os.path.exists(path):
+            try:
+                os.unlink(path)
+            except OSError:
+                pass
+    _cache_paths.clear()
+    _audio_file.cache_clear()

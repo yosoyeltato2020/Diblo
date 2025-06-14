@@ -32,10 +32,11 @@ ScreenManager:
             background_normal: ''
             background_color: 0.3, 0.6, 1, 1
             on_release:
+                # solo cambia de pantalla; la palabra se cargará en on_pre_enter
                 app.root.current = 'dibujo'
 
 <DibujoScreen@Screen>:
     name: 'dibujo'
-    on_enter: widget.cambiar_palabra()
+    on_pre_enter: root.ids.widget.cambiar_palabra()
     DibujoWidget:
         id: widget
