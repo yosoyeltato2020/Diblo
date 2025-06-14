@@ -11,11 +11,11 @@ Window.clearcolor = (1, 1, 1, 1)   # fondo blanco global
 
 
 class DibloApp(App):
-    kv_file = None                  # evitamos que Kivy cargue diblo.kv dos veces
+    kv_file = " "                  # evitamos que Kivy cargue diblo.kv dos veces
 
     def build(self):
-        kv_path = Path(__file__).with_name("diblo.kv")
-        return Builder.load_file(str(kv_path))
+        
+        return Builder.load_file(str("diblo.kv"))
 
     # Limpia la caché de audios al cerrar con normalidad
     def on_stop(self):
