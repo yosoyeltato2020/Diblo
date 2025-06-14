@@ -1,51 +1,73 @@
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
 from kivy.uix.button import Button
 from componentes import DrawingArea
 from palabras import Palabras
 from pronunciador import reproducir_palabra
 from reconocimiento_offline import reconocer_voz
+from kivy.graphics import Color, Rectangle  # fondo opcional
+
 
 class DibujoWidget(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(orientation='vertical', **kwargs)
-        self.palabras = Palabras()
-        self.area_dibujo = DrawingArea(size_hint=(1, 0.8))
+
+        # ------- etiqueta visible -------
+        self.lbl_palabra = Label(
+            markup=True,
+            font_size='28sp',
+            size_hint_y=None,        # altura fija
+            halign='center',
+            valign='middle'
+        )
+        # altura según el alto del texto
+        self.lbl_palabra.bind(texture_size=lambda l, t: setattr(l, 'height', t[1] + 20))
+
+        # fondo gris clarito para que se vea
+        with self.lbl_palabra.canvas.before:
+            Color(0.7, 0.85, 1, 1)
+            self.bg = Rectangle()
+        self.lbl_palabra.bind(pos=self._update_bg, size=self._update_bg)
+
+        self.add_widget(self.lbl_palabra)
+        # --------------------------------
+
+        # resto igual que antes …
+        self.area_dibujo = DrawingArea(size_hint=(1, 0.7))
         self.add_widget(self.area_dibujo)
 
-        self.botonera = BoxLayout(size_hint=(1, 0.2))
-        self.add_widget(self.botonera)
+        botones = BoxLayout(size_hint_y=0.2)
+        for txt, fn in [
+            ("Cambiar palabra", self.cambiar_palabra),
+            ("Borrar", self.borrar_dibujo),
+            ("Pronunciar", self.pronunciar),
+            ("Hablar", self.reconocer)
+        ]:
+            b = Button(text=txt); b.bind(on_press=fn); botones.add_widget(b)
+        self.add_widget(botones)
 
-        self.boton_cambiar = Button(text="Cambiar palabra")
-        self.boton_borrar = Button(text="Borrar")
-        self.boton_pronunciar = Button(text="Pronunciar")
-        self.boton_voz = Button(text="Repetir voz")
+        self.palabras = Palabras()
+        self.palabra_actual = ''
+        self.cambiar_palabra()            # primera palabra
 
-        self.boton_cambiar.bind(on_press=self.cambiar_palabra)
-        self.boton_borrar.bind(on_press=self.borrar_dibujo)
-        self.boton_pronunciar.bind(on_press=self.pronunciar)
-        self.boton_voz.bind(on_press=self.reconocer)
+    # ---- util para fondo de la etiqueta ----
+    def _update_bg(self, *args):
+        self.bg.pos = self.lbl_palabra.pos
+        self.bg.size = self.lbl_palabra.size
+    # ----------------------------------------
 
-        for boton in [self.boton_cambiar, self.boton_borrar, self.boton_pronunciar, self.boton_voz]:
-            self.botonera.add_widget(boton)
-
+    def cambiar_palabra(self, *a):
         self.palabra_actual = self.palabras.nueva_palabra()
-        print(f"Palabra inicial: {self.palabra_actual}")
-
-    def cambiar_palabra(self, instance):
-        self.palabra_actual = self.palabras.nueva_palabra()
-        print(f"Nueva palabra: {self.palabra_actual}")
-
-    def borrar_dibujo(self, instance):
+        self.lbl_palabra.text = f"[b]Dibuja: {self.palabra_actual.upper()}[/b]"
         self.area_dibujo.borrar_canvas()
-
-    def pronunciar(self, instance):
         reproducir_palabra(self.palabra_actual)
 
-    def reconocer(self, instance):
+    def borrar_dibujo(self, *_):  self.area_dibujo.borrar_canvas()
+    def pronunciar(self, *_):      reproducir_palabra(self.palabra_actual)
+
+    def reconocer(self, *_):
         texto = reconocer_voz()
         if texto:
-            print(f"Reconocido: {texto}")
-            if texto.lower() == self.palabra_actual.lower():
-                print("¡Correcto!")
-            else:
-                print("Incorrecto. Intenta de nuevo.")
+            self.lbl_palabra.text = f"[color=00aa00]Has dicho:[/color] {texto}"
+        else:
+            self.lbl_palabra.text = "[color=ff0000]No se entendió[/color]"
