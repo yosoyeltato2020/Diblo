@@ -8,31 +8,21 @@ ScreenManager:
 
 <WelcomeScreen@Screen>:
     name: 'welcome'
-    BoxLayout:
-        orientation: 'vertical'
-        spacing: dp(60)
-        padding: dp(60)
-        canvas.before:
-            Color:
-                rgba: 0.88, 0.95, 1, 1
-            Rectangle:
-                pos: self.pos
-                size: self.size
-        Label:
-            text: 'D I B L O'
-            font_size: '72sp'
-            bold: True
-            color: 0.12, 0.12, 0.35, 1
+    FloatLayout:
+        Image:                       # -------------  NUEVO  -------------
+            source: 'diblo.png'      # pon el PNG en la misma carpeta
+            allow_stretch: True
+            keep_ratio: False
+            size: self.parent.size
+            pos: self.parent.pos
         Button:
             text: 'Comenzar'
             font_size: '32sp'
-            size_hint: 0.5, None
-            height: dp(80)
-            pos_hint: {'center_x': 0.5}
+            size_hint: .35, .15
+            pos_hint: {'center_x': .5, 'y': .05}
+            background_color: .3, .6, 1, 1
             background_normal: ''
-            background_color: 0.3, 0.6, 1, 1
             on_release:
-                # solo cambia de pantalla; la palabra se cargará en on_pre_enter
                 app.root.current = 'dibujo'
 
 <DibujoScreen@Screen>:
