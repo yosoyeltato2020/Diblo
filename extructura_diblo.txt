@@ -1,0 +1,34 @@
+¡Claro que sí\! Aquí tienes la estructura de tu proyecto Diblo en un archivo de texto (`.txt`) para que puedas guardarlo fácilmente.
+
+Guarda este contenido en un archivo llamado `estructura_diblo.txt` (o el nombre que prefieras) dentro de tu carpeta principal `Diblo/`.
+
+```
+Diblo/
+├── main.py
+├── componentes.py
+├── pantalla_dibujo.py
+├── palabras.py
+├── pronunciador.py
+├── reconocimiento_offline.py
+├── diblo.kv
+├── config.py
+├── locale_manager.py
+├── palabras.json
+├── diblo.png
+├── dibujos/
+│   └── (Aquí se guardarán los dibujos en PNG)
+├── lang/
+│   ├── es.json
+│   └── en.json
+├── audio/                   (Opcional: para efectos de sonido)
+│   ├── grabacion_inicio.wav
+│   └── grabacion_fin.wav
+├── vosk_model/              (Para el modelo de reconocimiento de voz offline Vosk)
+│   └── vosk-model-small-es-0.42/
+│       ├── am/
+│       ├── graph/
+│       ├── ivector/
+│       ├── mfcc.conf
+│       └── ... (otros archivos del modelo Vosk descomprimido)
+└── README.md
+```

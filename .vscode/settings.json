@@ -3,5 +3,6 @@
         "activityBar.background": "#332E09",
         "titleBar.activeBackground": "#48400C",
         "titleBar.activeForeground": "#FCFAEE"
-    }
+    },
+    "materialkv.pythonFile": "main.py"
 }

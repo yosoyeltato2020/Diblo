@@ -1,0 +1,10 @@
+{
+  "categorias": {
+    "Animales": ["gato", "perro", "pájaro", "pez", "león", "elefante", "jirafa", "mono", "tigre", "oso"],
+    "Objetos": ["casa", "mesa", "silla", "libro", "lápiz", "cama", "coche", "pelota", "florero", "ventana"],
+    "Naturaleza": ["sol", "luna", "árbol", "nube", "estrella", "mar", "montaña", "río", "piedra", "arena"],
+    "Frutas": ["manzana", "pera", "plátano", "uva", "naranja", "fresa", "limón", "sandía", "melón", "kiwi"],
+    "Comida": ["pan", "queso", "leche", "huevo", "arroz", "pasta", "pizza", "sopa", "carne", "pescado"]
+  },
+  "default": ["sol", "luna", "casa", "gato", "perro", "árbol", "flor", "nube", "estrella", "mar"]
+}
