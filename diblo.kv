@@ -1,4 +1,6 @@
 #:kivy 2.2.1
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+#:import dp kivy.metrics.dp
 #:import DrawingArea componentes.DrawingArea
 
 RootWidget:
@@ -8,8 +10,11 @@ RootWidget:
     orientation: 'vertical'
     ScreenManager:
         id: screen_manager
+        transition: FadeTransition()
         WelcomeScreen:
             name: 'welcome_screen'
+        LanguageScreen:
+            name: 'language_screen'
         PantallaDibujo:
             name: 'pantalla_dibujo'
 
@@ -17,51 +22,74 @@ RootWidget:
     BoxLayout:
         orientation: 'vertical'
         padding: dp(20)
-        spacing: dp(15)
+        spacing: dp(30)
         canvas.before:
             Color:
-                rgb: 0.95, 0.95, 0.95
+                rgb: 1, 1, 1
             Rectangle:
                 pos: self.pos
                 size: self.size
 
-        Label:
-            id: welcome_title_label
-            text: root.welcome_text
-            font_size: '30sp'
-            bold: True
-            halign: 'center'
-            valign: 'top'
-            size_hint_y: 0.3
-
-        BoxLayout:
-            orientation: 'horizontal'
-            size_hint_y: 0.3
-            spacing: dp(10)
-            padding: dp(10)
-
-            Label:
-                id: lang_selection_label
-                text: root.lang_label_text
-                font_size: '20sp'
-                halign: 'right'
-                valign: 'middle'
-                size_hint_x: 0.5
-
-            Spinner:
-                id: lang_spinner
-                text: root.selected_language_name
-                values: ['Español', 'English']
-                on_text: root.on_lang_spinner_text(self.text)
-                size_hint_x: 0.5
-                font_size: '20sp'
-                background_color: 0.7, 0.7, 0.7, 1
+        Image:
+            source: 'assets/diblo.png'
+            allow_stretch: True
+            size_hint_y: 0.75
 
         Button:
-            text: root.start_button_text
-            on_release: app.sm.current = 'pantalla_dibujo'
-            size_hint_y: 0.2
-            background_color: 0.2, 0.7, 0.2, 1
+            text: "Comenzar"
+            size_hint_y: 0.15
+            font_size: '20sp'
+            background_color: 0.2, 0.6, 0.9, 1
+            color: 1, 1, 1, 1
+            on_release: app.sm.current = 'language_screen'
+
+<LanguageScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(20)
+        spacing: dp(20)
+        canvas.before:
+            Color:
+                rgb: 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        Image:
+            source: 'assets/gato.png'
+            size_hint_y: 0.3
+            allow_stretch: True
+
+        Label:
+            text: "Selecciona tu idioma"
+            font_size: '22sp'
+            size_hint_y: 0.1
+
+        Spinner:
+            id: lang_spinner
+            text: root.selected_language_name
+            values: ['Español', 'English']
+            size_hint_y: 0.1
+            on_text: root.on_lang_spinner_text(self.text)
+
+        Label:
+            text: "Selecciona una categoría"
+            font_size: '22sp'
+            size_hint_y: 0.1
+
+        Spinner:
+            id: categoria_spinner
+            text: "Todas las categorías"
+            values: []
+            size_hint_y: 0.1
+
+        Button:
+            text: "Iniciar dibujo"
+            size_hint_y: 0.15
+            font_size: '20sp'
+            background_color: 0.2, 0.7, 0.3, 1
+            color: 1, 1, 1, 1
+            on_release: root.ir_a_pantalla_dibujo()
 
 <PantallaDibujo>:
     BoxLayout:
@@ -70,66 +98,22 @@ RootWidget:
         spacing: dp(10)
         canvas.before:
             Color:
-                rgb: 0.95, 0.95, 0.95
+                rgb: 0.97, 0.97, 0.97
             Rectangle:
                 pos: self.pos
                 size: self.size
 
-        BoxLayout:
-            orientation: 'horizontal'
-            size_hint_y: 0.15
-            spacing: dp(10)
-            padding: dp(5)
-
-            Label:
-                id: lbl_palabra_base_text
-                text: ''
-                font_size: '28sp'
-                bold: True
-                halign: 'center'
-                valign: 'middle'
-                size_hint_x: 0.4
-                markup: True
-
-            Label:
-                id: lbl_palabra
-                text: ''
-                font_size: '28sp'
-                bold: True
-                halign: 'center'
-                valign: 'middle'
-                size_hint_x: 0
-                markup: True
-
-            Label:
-                id: lbl_categoria_actual_id
-                text: 'Categoría:'
-                font_size: '16sp'
-                halign: 'right'
-                valign: 'middle'
-                size_hint_x: 0.2
-                text_size: self.size
-
-            Spinner:
-                id: spinner_categorias_id
-                text: 'Todas las categorías'
-                values: ['Todas las categorías']
-                on_text: root.on_spinner_category_selected(self, self.text)
-                size_hint_x: 0.4
-                font_size: '16sp'
-
         Label:
-            id: lbl_mensaje_voz
-            text: ''
-            font_size: '18sp'
-            halign: 'center'
-            valign: 'middle'
-            size_hint_y: 0.05
+            id: lbl_palabra_base_text
+            text: 'Tu palabra aparecerá aquí'
+            font_size: '26sp'
+            bold: True
+            size_hint_y: 0.1
             color: 0, 0, 0, 1
 
         DrawingArea:
             id: drawing_area
-            size_hint_y: 0.65
+            size_hint_y: 0.6
             canvas.before:
                 Color:
                     rgb: 1, 1, 1
@@ -137,51 +121,49 @@ RootWidget:
                     pos: self.pos
                     size: self.size
 
-        BoxLayout:
-            orientation: 'horizontal'
-            size_hint_y: 0.15
-            spacing: dp(5)
-            padding: dp(5)
+        GridLayout:
+            id: color_buttons_grid
+            cols: 6
+            size_hint_y: 0.1
+            spacing: dp(4)
 
-            GridLayout:
-                id: color_buttons_grid
-                cols: 6
-                size_hint_x: 0.6
-                spacing: dp(2)
+        GridLayout:
+            cols: 3
+            size_hint_y: 0.2
+            spacing: dp(6)
 
-            GridLayout:
-                cols: 2
-                rows: 3
-                size_hint_x: 0.4
-                spacing: dp(2)
+            Button:
+                text: "Nueva Palabra"
+                on_release: root.generar_nueva_palabra()
+                background_color: 0.2, 0.6, 0.9, 1
+                color: 1, 1, 1, 1
 
-                Button:
-                    id: btn_nueva_palabra
-                    text: 'Nueva Palabra'
-                    on_release: root.generar_nueva_palabra()
-                    background_color: 0.2, 0.6, 0.8, 1
-                Button:
-                    id: btn_borrar
-                    text: 'Borrar'
-                    on_release: root.borrar_dibujo()
-                    background_color: 0.8, 0.2, 0.2, 1
-                Button:
-                    id: btn_guardar
-                    text: 'Guardar'
-                    on_release: root.guardar_dibujo()
-                    background_color: 0.2, 0.8, 0.6, 1
-                Button:
-                    id: btn_pronunciar
-                    text: 'Pronunciar'
-                    on_release: root.pronunciar_palabra()
-                    background_color: 0.6, 0.4, 0.8, 1
-                Button:
-                    id: btn_mic_id
-                    text: 'Escuchar'
-                    on_release: root.iniciar_reconocimiento_voz()
-                    background_color: 0.9, 0.6, 0.1, 1
-                Button:
-                    id: btn_menu_principal
-                    text: 'Menú Principal'
-                    on_release: root.go_to_main_menu()
-                    background_color: 0.5, 0.5, 0.5, 1
+            Button:
+                text: "Borrar"
+                on_release: root.borrar_dibujo()
+                background_color: 0.8, 0.2, 0.2, 1
+                color: 1, 1, 1, 1
+
+            Button:
+                text: "Guardar"
+                on_release: root.guardar_dibujo()
+                background_color: 0.2, 0.8, 0.6, 1
+                color: 1, 1, 1, 1
+
+            Button:
+                text: "Pronunciar"
+                on_release: root.pronunciar_palabra()
+                background_color: 0.6, 0.4, 0.8, 1
+                color: 1, 1, 1, 1
+
+            Button:
+                text: "Escuchar"
+                on_release: root.iniciar_reconocimiento_voz()
+                background_color: 0.9, 0.6, 0.1, 1
+                color: 0, 0, 0, 1
+
+            Button:
+                text: "Volver"
+                on_release: root.go_to_main_menu()
+                background_color: 0.4, 0.4, 0.4, 1
+                color: 1, 1, 1, 1
