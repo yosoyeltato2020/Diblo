@@ -30,16 +30,12 @@ class LanguageScreen(Screen):
     def on_kv_post(self, base_widget):
         locale_manager.locale_manager.bind(on_lang_change=self.update_texts)
         self.update_texts()
-
-        from palabras import Palabras
         gestor = Palabras()
         self.ids.categoria_spinner.values = ["Todas las categorías"] + gestor.get_categorias()
 
     def update_texts(self, *args):
-        if self.ids and "lang_spinner" in self.ids:
-            lang_code = locale_manager.locale_manager.get_current_lang()
-            self.ids.lang_spinner.text = "Español" if lang_code == "es" else "English"
-            self.selected_language_name = self.ids.lang_spinner.text
+        lang_code = locale_manager.locale_manager.get_current_lang()
+        self.selected_language_name = "Español" if lang_code == "es" else "English"
 
     def on_lang_spinner_text(self, text):
         if text == "Español":

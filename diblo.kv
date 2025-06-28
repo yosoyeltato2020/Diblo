@@ -47,7 +47,7 @@ RootWidget:
     BoxLayout:
         orientation: 'vertical'
         padding: dp(20)
-        spacing: dp(20)
+        spacing: dp(10)
         canvas.before:
             Color:
                 rgb: 1, 1, 1
@@ -56,26 +56,60 @@ RootWidget:
                 size: self.size
 
         Image:
+            source: 'assets/diblo.png'
+            size_hint_y: 0.25
+            allow_stretch: True
+
+        Label:
+            text: "DIBLO"
+            font_size: '32sp'
+            bold: True
+            color: 0.1, 0.1, 0.1, 1
+            size_hint_y: 0.1
+
+        Image:
             source: 'assets/gato.png'
-            size_hint_y: 0.3
+            size_hint_y: 0.25
             allow_stretch: True
 
         Label:
             text: "Selecciona tu idioma"
             font_size: '22sp'
-            size_hint_y: 0.1
+            size_hint_y: 0.08
+            color: 0, 0, 0, 1
 
-        Spinner:
-            id: lang_spinner
-            text: root.selected_language_name
-            values: ['Español', 'English']
+        BoxLayout:
+            orientation: 'horizontal'
             size_hint_y: 0.1
-            on_text: root.on_lang_spinner_text(self.text)
+            spacing: dp(10)
+
+            Image:
+                source: 'assets/bandera_es.png'
+                size_hint_x: 0.15
+
+            Button:
+                id: btn_es
+                text: "Español"
+                on_release: root.on_lang_spinner_text("Español")
+                background_color: (0.8, 0.8, 0.8, 1)
+                color: 0, 0, 0, 1
+
+            Image:
+                source: 'assets/bandera_en.png'
+                size_hint_x: 0.15
+
+            Button:
+                id: btn_en
+                text: "English"
+                on_release: root.on_lang_spinner_text("English")
+                background_color: (0.8, 0.8, 0.8, 1)
+                color: 0, 0, 0, 1
 
         Label:
             text: "Selecciona una categoría"
             font_size: '22sp'
-            size_hint_y: 0.1
+            size_hint_y: 0.08
+            color: 0, 0, 0, 1
 
         Spinner:
             id: categoria_spinner
@@ -85,9 +119,9 @@ RootWidget:
 
         Button:
             text: "Iniciar dibujo"
-            size_hint_y: 0.15
+            size_hint_y: 0.12
             font_size: '20sp'
-            background_color: 0.2, 0.7, 0.3, 1
+            background_color: 0.1, 0.6, 0.3, 1
             color: 1, 1, 1, 1
             on_release: root.ir_a_pantalla_dibujo()
 
